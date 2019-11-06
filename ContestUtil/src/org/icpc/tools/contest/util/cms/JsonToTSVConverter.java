@@ -21,7 +21,7 @@ import org.icpc.tools.contest.util.cms.CMSDownloadHelper.ContestInfo;
 
 public class JsonToTSVConverter {
 	private static final String JSON_FILE = "data.json";
-	private static final boolean FINALS_HACK = true;
+	private static final boolean FINALS_HACK = false;
 	private static final boolean OUTPUT_MISSING_NAMES = true;
 
 	public static class CMSGroup {
@@ -697,7 +697,7 @@ public class JsonToTSVConverter {
 		Object[] insts = obj.getArray("institutions");
 		for (Object instObj : insts) {
 			JsonObject inst = (JsonObject) instObj;
-			String id = inst.getInt("institutionId") + "";
+			String id = inst.getInt("institutionUnitAliasId") + "";
 			CMSInstitution i = getInstitution(id);
 			i.name = inst.getString("name");
 			if (i.name != null)
