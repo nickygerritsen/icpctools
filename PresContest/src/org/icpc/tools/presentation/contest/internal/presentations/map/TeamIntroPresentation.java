@@ -62,8 +62,7 @@ public class TeamIntroPresentation extends AbstractICPCPresentation {
 		Position[] instPos;
 	}
 
-	protected Animator3D anim = new Animator3D(0.0, new Animator.Movement(60, 180), 0.0, new Animator.Movement(30, 90),
-			1.0, new Animator.Movement(0.5, 1.5));
+	protected Animator3D anim;
 
 	protected Font groupFont;
 	protected Font font;
@@ -117,7 +116,7 @@ public class TeamIntroPresentation extends AbstractICPCPresentation {
 		long time = 0;
 		for (int i = 0; i < numGroups; i++) {
 			zooms[i] = setTargets(getContest(), groups[i].getId());
-			zooms[i].name = groups[i].getName();
+			zooms[i].name = "Participating universities";
 			zooms[i].startTime = time;
 			time += TIME_PER_GROUP + zooms[i].instPos.length * TIME_PER_TEAM;
 			zooms[i].endTime = time;
@@ -125,6 +124,11 @@ public class TeamIntroPresentation extends AbstractICPCPresentation {
 			// .println(zooms[i].name + " " + zooms[i].numTeams + " " + zooms[i].startTime + " " +
 			// zooms[i].endTime);
 		}
+
+		GroupZoom gz = zooms[0];
+		Position p = gz.pos;
+		anim = new Animator3D(p.x, new Animator.Movement(60, 180), p.y, new Animator.Movement(30, 90),
+				p.z, new Animator.Movement(0.5, 1.5));
 	}
 
 	protected GroupZoom setTargets(IContest contest, String groupId) {
@@ -137,8 +141,13 @@ public class TeamIntroPresentation extends AbstractICPCPresentation {
 
 		ITeam[] teams = contest.getTeams();
 		List<Position> pos = new ArrayList<>();
+		List<String> orgIds = new ArrayList<>();
 		for (ITeam t : teams) {
 			IOrganization org = contest.getOrganizationById(t.getOrganizationId());
+			if (orgIds.contains(org.getId())) {
+				continue;
+			}
+			orgIds.add(org.getId());
 			String[] groupIds = t.getGroupIds();
 			if (org != null && GroupPresentation.belongsToGroup(groupIds, groupId)) {
 				double lat = org.getLatitude();
@@ -152,7 +161,7 @@ public class TeamIntroPresentation extends AbstractICPCPresentation {
 					minLon = Math.min(minLon, lon);
 					maxLon = Math.max(maxLon, lon);
 				}
-				String label = t.getId() + " - " + org.getFormalName();
+				String label = org.getFormalName();
 				Position p = new Position(lon, lat, 1, label);
 				createOrgLogo(p, org);
 				pos.add(p);
@@ -198,7 +207,9 @@ public class TeamIntroPresentation extends AbstractICPCPresentation {
 				gz = zooms[g];
 		}
 		if (gz == null) {
-			anim.setTarget(0, 0, 1);
+			gz = zooms[0];
+			Position p = gz.pos;
+			anim.setTarget(p.x, p.y, p.z);
 		} else {
 			long gzTime = time - gz.startTime;
 			if (gzTime < GROUP_INTRO_TIME || gzTime > GROUP_INTRO_TIME + gz.instPos.length * TIME_PER_TEAM) {
