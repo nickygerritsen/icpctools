@@ -302,7 +302,7 @@ public class BalloonFloorPresentation extends AbstractICPCPresentation {
 						yy = smImg.getHeight() / 2 + 4;
 					}
 
-					String s = sr.org.getName();
+					String s = sr.team.getName();
 					g.setColor(Color.WHITE);
 					g.setFont(font);
 					FontMetrics fm = g.getFontMetrics();

@@ -31,8 +31,8 @@ public class BalloonMapPresentation extends AbstractICPCPresentation {
 	private static final long TIME_TO_KEEP_FAILED = 8000;
 	private static final long TIME_TO_KEEP_RECENT = 14000;
 	private static final long TIME_TO_FADE_RECENT = 2000;
-	private static final double o_lon = -8.6178885;
-	private static final double o_lat = 41.1465519;
+	private static final double o_lon = 5.4907148;
+	private static final double o_lat = 51.4486098;
 	private static final int NUM_SEGMENTS = 15;
 
 	private static final Movement SUBMISSION_MOVEMENT = new Movement(0.1, 0.1);
@@ -49,6 +49,7 @@ public class BalloonMapPresentation extends AbstractICPCPresentation {
 
 		protected int problem;
 		protected IOrganization org;
+		protected ITeam team;
 		protected BufferedImage logo;
 		protected BufferedImage smLogo;
 
@@ -178,6 +179,7 @@ public class BalloonMapPresentation extends AbstractICPCPresentation {
 		sr.anim.setTarget(0.95);
 		sr.problem = contest.getProblemIndex(submission.getProblemId());
 		IOrganization org = contest.getOrganizationById(team.getOrganizationId());
+		sr.team = team;
 		if (org != null) {
 			sr.org = org;
 			sr.logo = org.getLogoImage(height / 6, height / 6, true, true);
@@ -359,7 +361,7 @@ public class BalloonMapPresentation extends AbstractICPCPresentation {
 
 			}
 
-			String s = sr.org.getName();
+			String s = sr.team.getName();
 			g2.setColor(Color.WHITE);
 			g2.setFont(font);
 			FontMetrics fm = g2.getFontMetrics();
