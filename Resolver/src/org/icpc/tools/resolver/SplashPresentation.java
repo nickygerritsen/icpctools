@@ -39,10 +39,10 @@ public class SplashPresentation extends AbstractICPCPresentation {
 		float dpi = 96;
 		float inch = height * 72f / dpi / 10f;
 		titleFont = ICPCFont.getMasterFont().deriveFont(Font.BOLD, inch * 1f);
-		attrFont = ICPCFont.getMasterFont().deriveFont(Font.PLAIN, inch * 0.5f);
+		attrFont = ICPCFont.getMasterFont().deriveFont(Font.PLAIN, inch * 0.4f);
 		smallFont = ICPCFont.getMasterFont().deriveFont(Font.BOLD, inch * 0.3f);
 
-		image = getContest().getLogoImage((int) (width * 0.5), (int) (height * 0.3), true, true);
+		image = getContest().getLogoImage((int) (width * 0.75), (int) (height * 0.5), true, true);
 
 		if (image == null)
 			image = getIdImage();
@@ -81,25 +81,19 @@ public class SplashPresentation extends AbstractICPCPresentation {
 		g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
 
 		int BORDER = height / 20;
+		int topOffset = 0;
+		int h = BORDER + topOffset;
 
-		// ----- Contest title -----
-		g.setColor(Color.WHITE);
-		g.setFont(titleFont);
-		FontMetrics fm = g.getFontMetrics();
-		String s = Messages.getString("Could not load contest!");
-		IContest contest = getContest();
-		if (contest != null)
-			s = contest.getName();
-
-		int h = BORDER;
-		String[] titleStr = splitString(g, s, width - BORDER * 2);
-		for (String ss : titleStr) {
-			g.drawString(ss, (width - fm.stringWidth(ss)) / 2, h + fm.getAscent());
-			h += fm.getHeight();
+		if (image != null) {
+			g.drawImage(image, (width - image.getWidth()) / 2, h, null);
+			h += image.getHeight();
 		}
 
-		g.setFont(smallFont);
-		FontMetrics fm2 = g.getFontMetrics();
+		g.setColor(Color.WHITE);
+		g.setFont(titleFont);
+		IContest contest = getContest();
+		String s;
+		FontMetrics fm = g.getFontMetrics();
 
 		if (contest != null) {
 			ISubmission[] submissions = contest.getSubmissions();
@@ -109,22 +103,16 @@ public class SplashPresentation extends AbstractICPCPresentation {
 					count++;
 			}
 			s = Messages.getString("splashPending").replace("{0}", count + "");
-			g.drawString(s, (width - fm2.stringWidth(s)) / 2, h + fm2.getHeight());
+			g.drawString(s, (width - fm.stringWidth(s)) / 2, h + BORDER + fm.getHeight());
 		}
 
 		// ----- Attribution -----
-		int tt = h + fm2.getHeight();
 		g.setColor(Color.WHITE);
 		g.setFont(attrFont);
 		fm = g.getFontMetrics();
 
 		int GAP = fm.getHeight() / 3;
 		h = (int) (height - BORDER - fm.getHeight() * 5.5f - GAP * 2);
-
-		if (image != null) {
-			int m = tt + (h - fm.getAscent() - GAP - tt) / 2;
-			g.drawImage(image, (width - image.getWidth()) / 2, m - image.getHeight() / 2, null);
-		}
 
 		ShadedRectangle.drawRoundRect(g, (width - fm.stringWidth(title)) / 2 - GAP, h - fm.getAscent() - GAP,
 				fm.stringWidth(title) + GAP * 2, fm.getAscent() + GAP * 2, ICPCColors.PENDING[ICPCColors.CCOUNT / 3]);
@@ -136,11 +124,13 @@ public class SplashPresentation extends AbstractICPCPresentation {
 		int col1 = (width - ww) / 2;
 		int col2 = (width + ww) / 2;
 
+		g.setFont(smallFont);
+		FontMetrics fm2 = g.getFontMetrics();
+
 		GAP = fm2.getHeight() / 3;
 		ShadedRectangle.drawRoundRect(g, col1 - GAP, h - fm2.getAscent() - GAP, fm2.stringWidth(conceptBy) + GAP * 2,
 				fm2.getHeight() + (int) (GAP * 1.7f), ICPCColors.SOLVED[ICPCColors.CCOUNT / 3]);
 		g.setColor(Color.WHITE);
-		g.setFont(smallFont);
 		g.drawString(conceptBy, col1, h);
 
 		ShadedRectangle.drawRoundRect(g, col2 - fm2.stringWidth(implBy) - GAP, h - fm2.getAscent() - GAP,
