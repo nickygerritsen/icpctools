@@ -37,28 +37,8 @@ public class FloorGeneratorNwerc2019 extends FloorGenerator {
     // If > 0, use balloons with these numbers
     private static final int useIntegerBalloons = -1;
 
-    private static class SkippedTeam {
-        int room;
-        int row;
-        int col;
 
-        SkippedTeam(int room, int row, int col) {
-            this.room = room;
-            this.row = row;
-            this.col = col;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (!(o instanceof SkippedTeam))
-                return false;
-
-            SkippedTeam s = (SkippedTeam) o;
-            return s.room == this.room && s.row == this.row && s.col == this.col;
-        }
-    }
-
-    private static List<SkippedTeam> skippedTeams = new ArrayList<>();
+    private static List<Integer> skippedTeams = new ArrayList<>();
     private static HashMap<Integer, Integer> teamsPerRoom = new HashMap<>();
 
     private static FloorMap floor = new FloorMap(taw - .2f, tad - .2f, tw, td);
@@ -86,19 +66,16 @@ public class FloorGeneratorNwerc2019 extends FloorGenerator {
     public static void main(String[] args) {
         Trace.init("ICPC Floor Map Generator", "floorMap", args);
 
+        skippedTeams.add(7);
+        skippedTeams.add(28);
+        skippedTeams.add(52); // Used to be 128, but Eloïse dropped
+        skippedTeams.add(66);
+        skippedTeams.add(80);
+        skippedTeams.add(94);
+        skippedTeams.add(105);
+        skippedTeams.add(126);
+
         try {
-//            teamsPerRoom.put(9, 16);
-//            teamsPerRoom.put(10, 16);
-//            teamsPerRoom.put(11, 16);
-//            teamsPerRoom.put(12, 16);
-//            teamsPerRoom.put(13, 16);
-//            teamsPerRoom.put(14, 16);
-//            teamsPerRoom.put(15, 16);
-//            teamsPerRoom.put(16, 16);
-//
-//            skippedTeams.add(new SkippedTeam(9, 3, 1));
-//            skippedTeams.add(new SkippedTeam(9, 4, 1));
-//            skippedTeams.add(new SkippedTeam(9, 4, 2));
 
             float roomHeight = numCols * taw;
             float roomWidth = numRows * tad;
@@ -106,7 +83,7 @@ public class FloorGeneratorNwerc2019 extends FloorGenerator {
             float totalRoomsWidth = (numRooms / 2f) * roomWidth + ((numRooms / 2f)) * innerRoomSpace - 0.8f * innerRoomSpace;
 
             for (int i = 0; i < numProblems; i++) {
-                float x = 0;
+                float x = totalRoomsWidth + 1;
                 float y = roomHeight + 20f * (i + 1) / 12f;
                 if (useIntegerBalloons > 0) {
                     floor.createBalloon((i + useIntegerBalloons) + "", x, y);
@@ -115,68 +92,26 @@ public class FloorGeneratorNwerc2019 extends FloorGenerator {
                 }
             }
 
-            floor.createPrinter(2, (roomHeight + bottomRoomsStart) / 2f);
+            floor.createPrinter(roomWidth + innerRoomSpace / 2f, roomHeight + 1);
 
-            floor.createAisle(1, roomHeight, 1, bottomRoomsStart);
-            floor.createAisle(1, roomHeight, totalRoomsWidth + 1, roomHeight);
-            floor.createAisle(1, bottomRoomsStart, totalRoomsWidth + 1, bottomRoomsStart);
+            floor.createAisle(totalRoomsWidth, roomHeight, totalRoomsWidth, bottomRoomsStart);
+            floor.createAisle(0, roomHeight, 0, bottomRoomsStart);
+            floor.createAisle(0, roomHeight, totalRoomsWidth, roomHeight);
+            floor.createAisle(0, bottomRoomsStart, totalRoomsWidth, bottomRoomsStart);
 
             int teamId = 1;
             int room = firstRoom;
 
-            // Top rooms
-            for (int i = 0; i < numRooms / 2; i++) {
-                float roomTop = 0;
-                float roomLeft = 1 + i * (roomWidth + innerRoomSpace);
-                for (int j = 0; j < numRows; j++) {
-                    float x = roomLeft + (j + 1) * tad;
-                    float y1 = roomTop + taw / 2f;
-                    float y2;
-                    if (j == 0 || j == numRows - 1) {
-                        y2 = roomHeight;
-                    } else {
-                        y2 = roomHeight - taw / 2f;
-                    }
-                    floor.createAisle(x, y1, x, y2);
-                }
-
-                for (int j = 1; j < numCols; j++) {
-                    float y = roomTop + j * taw;
-                    floor.createAisle(roomLeft + tad, y, roomLeft + numRows * tad, y);
-                }
-
-                if (showTeams) {
-                    int roomTeamCount = 0;
-                    int maxInRoom = Integer.MAX_VALUE;
-                    if (teamsPerRoom.containsKey(room)) {
-                        maxInRoom = teamsPerRoom.get(room);
-                    }
-                    for (int r = 0; r < numRows; r++) {
-                        for (int c = 0; c < numCols; c++) {
-                            float x = roomLeft + tad - magicXDiff + (r * tad);
-                            float y = roomTop + taw / 2f + ((numCols - c - 1) * taw);
-                            SkippedTeam s = new SkippedTeam(room, r + 1, c + 1);
-                            if (skippedTeams.contains(s) || roomTeamCount >= maxInRoom) {
-                                floor.createTeam(-1, x, y, FloorMap.E);
-                            } else {
-                                floor.createTeam(teamId, x, y, FloorMap.E);
-                                teamId++;
-                                roomTeamCount++;
-                            }
-                        }
-                    }
-                }
-
-                room++;
-            }
-
             // Bottom rooms
             for (int i = 0; i < numRooms / 2; i++) {
-                float roomLeft = 1 + (numRooms / 2f - 1 - i) * (roomWidth + innerRoomSpace);
+                float roomLeft = (numRooms / 2f - 1 - i) * (roomWidth + innerRoomSpace);
                 for (int j = 0; j < numRows; j++) {
                     float x = roomLeft + j * tad;
                     float y1;
                     float y2 = bottomRoomsStart + roomHeight - taw / 2f;
+                    if (i >= 2) {
+                        y2 -= taw;
+                    }
                     if (j == 0 || j == numRows - 1) {
                         y1 = bottomRoomsStart;
                     } else {
@@ -185,7 +120,7 @@ public class FloorGeneratorNwerc2019 extends FloorGenerator {
                     floor.createAisle(x, y1, x, y2);
                 }
 
-                for (int j = 1; j < numCols; j++) {
+                for (int j = 1; j < (i >= 2 ? numCols - 1 : numCols); j++) {
                     float y = bottomRoomsStart + j * taw;
                     floor.createAisle(roomLeft, y, roomLeft + (numRows - 1) * tad, y);
                 }
@@ -197,17 +132,16 @@ public class FloorGeneratorNwerc2019 extends FloorGenerator {
                         maxInRoom = teamsPerRoom.get(room);
                     }
                     for (int r = numRows - 1; r >= 0; r--) {
-                        for (int c = 0; c < numCols; c++) {
+                        for (int c = 0; c < (i >= 2 ? numCols - 1 : numCols); c++) {
                             float x = roomLeft + tad - magicXDiff2 + (r * tad);
                             float y = bottomRoomsStart + taw / 2f + (c * taw);
-                            SkippedTeam s = new SkippedTeam(room, r + 1, c + 1);
-                            if (skippedTeams.contains(s) || roomTeamCount >= maxInRoom) {
+                            if (skippedTeams.contains(teamId) || roomTeamCount >= maxInRoom) {
                                 floor.createTeam(-1, x, y, FloorMap.W);
                             } else {
                                 floor.createTeam(teamId, x, y, FloorMap.W);
-                                teamId++;
                                 roomTeamCount++;
                             }
+                            teamId++;
                         }
                     }
                 }
@@ -215,19 +149,67 @@ public class FloorGeneratorNwerc2019 extends FloorGenerator {
                 room++;
             }
 
-//
+            // Top rooms
+            for (int i = 0; i < numRooms / 2; i++) {
+                float roomTop = 0;
+                float roomLeft = i * (roomWidth + innerRoomSpace);
+                for (int j = 0; j < numRows; j++) {
+                    float x = roomLeft + (j + 1) * tad;
+                    float y1 = roomTop + taw / 2f;
+                    if (i < 2) {
+                        y1 += taw;
+                    }
+                    float y2;
+                    if (j == 0 || j == numRows - 1) {
+                        y2 = roomHeight;
+                    } else {
+                        y2 = roomHeight - taw / 2f;
+                    }
+                    floor.createAisle(x, y1, x, y2);
+                }
+
+                for (int j = i < 2 ? 2 : 1; j < numCols; j++) {
+                    float y = roomTop + j * taw;
+                    floor.createAisle(roomLeft + tad, y, roomLeft + numRows * tad, y);
+                }
+
+                if (showTeams) {
+                    int roomTeamCount = 0;
+                    int maxInRoom = Integer.MAX_VALUE;
+                    if (teamsPerRoom.containsKey(room)) {
+                        maxInRoom = teamsPerRoom.get(room);
+                    }
+                    for (int r = 0; r < numRows; r++) {
+                        for (int c = 0; c < (i < 2 ? numCols - 1 : numCols); c++) {
+                            float x = roomLeft + tad - magicXDiff + (r * tad);
+                            float y = roomTop + taw / 2f + ((numCols - c - 1) * taw);
+                            if (skippedTeams.contains(teamId) || roomTeamCount >= maxInRoom) {
+                                floor.createTeam(-1, x, y, FloorMap.E);
+                            } else {
+                                floor.createTeam(teamId, x, y, FloorMap.E);
+                                roomTeamCount++;
+                            }
+                            teamId++;
+                        }
+                    }
+                }
+
+                room++;
+            }
+
+
             floor.writeCSV(System.out);
-//
-//            Trace.trace(Trace.USER, "------------------");
-//
+
+            Trace.trace(Trace.USER, "------------------");
+
             long time = System.currentTimeMillis();
-            Path path1 = floor.getPath(floor.getTeam(45), floor.getTeam(38));
-//            Path path2 = floor.getPath(t1, floor.getPrinter());
+            Path path1 = floor.getPath(floor.getTeam(118), floor.getTeam(6));
+            Path path2 = floor.getPath(floor.getTeam(29), floor.getPrinter());
 
             Trace.trace(Trace.USER, "Time: " + (System.currentTimeMillis() - time));
 
-//            show(floor, -1, true, path1, path2);
-            show(floor, 37, true, path1);
+            show(floor, -1, true, path1, path2);
+//            show(floor, 37, true, path1);
         } catch (Exception e) {
             Trace.trace(Trace.ERROR, "Error generating floor map", e);
         }
