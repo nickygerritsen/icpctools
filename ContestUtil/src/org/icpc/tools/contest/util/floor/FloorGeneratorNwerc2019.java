@@ -70,6 +70,7 @@ public class FloorGeneratorNwerc2019 extends FloorGenerator {
         skippedTeams.add(28);
         skippedTeams.add(52); // Used to be 128, but Eloïse dropped
         skippedTeams.add(66);
+        skippedTeams.add(68); // Cancellation of WA-Automaton
         skippedTeams.add(80);
         skippedTeams.add(94);
         skippedTeams.add(105);
