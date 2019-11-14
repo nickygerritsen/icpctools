@@ -67,13 +67,13 @@ public class FloorGeneratorNwerc2019 extends FloorGenerator {
         Trace.init("ICPC Floor Map Generator", "floorMap", args);
 
         skippedTeams.add(7);
-        skippedTeams.add(28);
-        skippedTeams.add(52); // Used to be 128, but Eloïse dropped
-        skippedTeams.add(66);
-        skippedTeams.add(68); // Cancellation of WA-Automaton
+        skippedTeams.add(18);
+        skippedTeams.add(52);
+        skippedTeams.add(68);
         skippedTeams.add(80);
         skippedTeams.add(94);
         skippedTeams.add(105);
+        skippedTeams.add(113);
         skippedTeams.add(126);
 
         try {
