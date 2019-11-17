@@ -66,7 +66,6 @@ public class FloorGeneratorNwerc2019 extends FloorGenerator {
     public static void main(String[] args) {
         Trace.init("ICPC Floor Map Generator", "floorMap", args);
 
-        skippedTeams.add(7);
         skippedTeams.add(18);
         skippedTeams.add(52);
         skippedTeams.add(68);
