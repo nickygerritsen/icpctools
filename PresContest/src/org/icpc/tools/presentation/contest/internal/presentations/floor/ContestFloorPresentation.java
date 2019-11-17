@@ -17,7 +17,7 @@ import org.icpc.tools.presentation.contest.internal.AbstractICPCPresentation;
 import org.icpc.tools.presentation.contest.internal.ICPCFont;
 
 public class ContestFloorPresentation extends AbstractICPCPresentation {
-	private static final int MS_PER_TEAM = 2000;
+	private static final int MS_PER_TEAM = 1000;
 
 	protected FloorMap floor;
 
@@ -29,7 +29,7 @@ public class ContestFloorPresentation extends AbstractICPCPresentation {
 
 	@Override
 	public void init() {
-		font = ICPCFont.getMasterFont().deriveFont(Font.PLAIN, 36);
+		font = ICPCFont.getMasterFont().deriveFont(Font.PLAIN, 42);
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class ContestFloorPresentation extends AbstractICPCPresentation {
 			@Override
 			public Color getDeskOutlineColor(String teamId) {
 				if (team != null && team.getId().equals(teamId))
-					return Color.WHITE;
+					return Color.RED;
 				return Color.BLACK;
 			}
 
@@ -83,17 +83,15 @@ public class ContestFloorPresentation extends AbstractICPCPresentation {
 			g.setColor(Color.WHITE);
 			String s = team.getName();
 			FontMetrics fm = g.getFontMetrics();
-			int x = 0;
 			IOrganization org = contest.getOrganizationById(team.getOrganizationId());
 			if (org != null) {
-				BufferedImage img = org.getLogoImage(fm.getHeight() + 10, fm.getHeight() + 10, true, true);
+				BufferedImage img = org.getLogoImage(fm.getHeight() + 40, fm.getHeight() + 40 + height/2, true, true);
 				if (img != null) {
-					x = img.getWidth();
-					g.drawImage(img, 10, 20 + (fm.getHeight() - img.getHeight()) / 2, null);
+					g.drawImage(img, 50, (fm.getHeight() - img.getHeight()) / 2 + height/2 - (int) (fm.getHeight() * 1.2), null);
 				}
 			}
 
-			g.drawString(s, x + 20, fm.getAscent() + 20);
+			g.drawString(s, 50, fm.getAscent() + 20 + height/2);
 		}
 	}
 }
