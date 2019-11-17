@@ -19,11 +19,12 @@ import org.icpc.tools.contest.model.internal.Award;
 import org.icpc.tools.contest.model.internal.Contest;
 
 public class AwardUtil {
-	private static final String[][] GROUPS = new String[][] { { "Asia", "Asian Champions" },
-			{ "North America", "North American Champions" }, { "South America", "South American Champions" },
-			{ "Europe", "European Champions" }, { "Africa", "African Champions" },
-			{ "Africa and the Middle East", "Africa and Middle East Champions" },
-			{ "Latin America", "Latin American Champions" }, { "South Pacific", "South Pacific Champions" } };
+	private static final String[][] GROUPS = new String[][] { { "Netherlands", "Dutch Champions" },
+			{ "United Kingdom", "British Champions" }, { "Denmark", "Danish Champions" },
+			{ "Germany", "German Champions" }, { "Sweden", "Swedish Champions" },
+			{ "Ireland", "Irish Champions" }, { "Norway", "Norwegian Champions" },
+			{ "Iceland", "Icelandic Champions" }, { "Finland", "Finnish Champions" },
+			{ "Belgium", "Belgian Champions" }, { "Estonia", "Estonian Champions" } };
 
 	protected static String FIRST_PLACE_CITATION = Messages.getString("awardWorldChampion");
 	private static final String[] MEDAL_NAMES = new String[] { Messages.getString("awardMedalGold"),
