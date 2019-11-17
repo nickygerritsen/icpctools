@@ -7,10 +7,13 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 
 import org.icpc.tools.contest.model.IContest;
+import org.icpc.tools.contest.model.IProblem;
 import org.icpc.tools.contest.model.ISubmission;
 import org.icpc.tools.presentation.contest.internal.AbstractICPCPresentation;
 import org.icpc.tools.presentation.contest.internal.ICPCColors;
@@ -31,6 +34,7 @@ public class SplashPresentation extends AbstractICPCPresentation {
 	protected Font titleFont;
 	protected Font attrFont;
 	protected Font smallFont;
+	protected Font mediumFont;
 
 	private BufferedImage image;
 
@@ -40,6 +44,7 @@ public class SplashPresentation extends AbstractICPCPresentation {
 		float inch = height * 72f / dpi / 10f;
 		titleFont = ICPCFont.getMasterFont().deriveFont(Font.BOLD, inch * 1f);
 		attrFont = ICPCFont.getMasterFont().deriveFont(Font.PLAIN, inch * 0.4f);
+		mediumFont = ICPCFont.getMasterFont().deriveFont(Font.BOLD, inch * 0.55f);
 		smallFont = ICPCFont.getMasterFont().deriveFont(Font.BOLD, inch * 0.3f);
 
 		image = getContest().getLogoImage((int) (width * 0.75), (int) (height * 0.5), true, true);
@@ -89,76 +94,50 @@ public class SplashPresentation extends AbstractICPCPresentation {
 			h += image.getHeight();
 		}
 
-		g.setColor(Color.WHITE);
+		g.setColor(new Color(96, 131, 194));
 		g.setFont(titleFont);
 		IContest contest = getContest();
 		String s;
 		FontMetrics fm = g.getFontMetrics();
 
 		if (contest != null) {
+			TreeMap<String, Integer> perProblemCount = new TreeMap<>();
 			ISubmission[] submissions = contest.getSubmissions();
 			int count = 0;
 			for (ISubmission submission : submissions) {
-				if (!contest.isJudged(submission))
+				if (!contest.isJudged(submission)) {
 					count++;
+					String problemId = submission.getProblemId();
+					if (perProblemCount.get(problemId) == null) {
+						perProblemCount.put(problemId, 0);
+					}
+					perProblemCount.put(problemId, perProblemCount.get(problemId) + 1);
+				}
 			}
 			s = Messages.getString("splashPending").replace("{0}", count + "");
 			g.drawString(s, (width - fm.stringWidth(s)) / 2, h + BORDER + fm.getHeight());
+
+			StringBuilder problemCountStringBuilder = new StringBuilder();
+			problemCountStringBuilder.append("   ");
+			for(Map.Entry<String,Integer> entry : perProblemCount.entrySet()) {
+				IProblem problem = contest.getProblemById(entry.getKey());
+				problemCountStringBuilder.append(problem.getLabel());
+				problemCountStringBuilder.append(": ");
+				problemCountStringBuilder.append(entry.getValue());
+				problemCountStringBuilder.append("    ");
+			}
+			g.setFont(mediumFont);
+			FontMetrics fm2 = g.getFontMetrics();
+			String problemCountString = problemCountStringBuilder.toString();
+			g.drawString(problemCountString, (width - fm2.stringWidth(problemCountString)) / 2, h + BORDER + 2*fm.getHeight());
 		}
 
 		// ----- Attribution -----
 		g.setColor(Color.WHITE);
-		g.setFont(attrFont);
-		fm = g.getFontMetrics();
-
-		int GAP = fm.getHeight() / 3;
-		h = (int) (height - BORDER - fm.getHeight() * 5.5f - GAP * 2);
-
-		ShadedRectangle.drawRoundRect(g, (width - fm.stringWidth(title)) / 2 - GAP, h - fm.getAscent() - GAP,
-				fm.stringWidth(title) + GAP * 2, fm.getAscent() + GAP * 2, ICPCColors.PENDING[ICPCColors.CCOUNT / 3]);
-		g.drawString(title, (width - fm.stringWidth(title)) / 2, h);
-		h += (fm.getHeight() * 2f + GAP);
-
-		int ww = Math.max(fm.stringWidth(conceptAttr1), fm.stringWidth(conceptAttr2)) + fm.stringWidth(implAttr)
-				+ BORDER * 3;
-		int col1 = (width - ww) / 2;
-		int col2 = (width + ww) / 2;
-
 		g.setFont(smallFont);
+		g.drawString(conceptBy + ": " + conceptAttr1 + "/" + conceptAttr2 + " (" + conceptOrg + ")", BORDER, height-BORDER);
+		String implString = implBy + ": " + implAttr + " (" + implOrg + ")";
 		FontMetrics fm2 = g.getFontMetrics();
-
-		GAP = fm2.getHeight() / 3;
-		ShadedRectangle.drawRoundRect(g, col1 - GAP, h - fm2.getAscent() - GAP, fm2.stringWidth(conceptBy) + GAP * 2,
-				fm2.getHeight() + (int) (GAP * 1.7f), ICPCColors.SOLVED[ICPCColors.CCOUNT / 3]);
-		g.setColor(Color.WHITE);
-		g.drawString(conceptBy, col1, h);
-
-		ShadedRectangle.drawRoundRect(g, col2 - fm2.stringWidth(implBy) - GAP, h - fm2.getAscent() - GAP,
-				fm2.stringWidth(implBy) + GAP * 2, fm2.getHeight() + (int) (GAP * 1.7f),
-				ICPCColors.SOLVED[ICPCColors.CCOUNT / 3]);
-		g.setColor(Color.WHITE);
-		g.setFont(smallFont);
-		g.drawString(implBy, col2 - fm2.stringWidth(implBy), h);
-		h += (fm.getHeight() * 1.5f + GAP);
-
-		g.setColor(Color.WHITE);
-		g.setFont(attrFont);
-		g.drawString(conceptAttr1, col1, h);
-
-		g.setColor(Color.WHITE);
-		g.setFont(attrFont);
-		g.drawString(implAttr, col2 - fm.stringWidth(implAttr), h);
-		h += fm.getHeight();
-
-		g.setColor(Color.WHITE);
-		g.setFont(attrFont);
-		g.drawString(conceptAttr2, col1, h);
-
-		g.setFont(smallFont);
-		g.drawString(implOrg, col2 - fm2.stringWidth(implOrg), h);
-		h += fm.getHeight();
-
-		g.setFont(smallFont);
-		g.drawString(conceptOrg, col1, h);
+		g.drawString(implString, width-BORDER-fm2.stringWidth(implString), height-BORDER);
 	}
 }
