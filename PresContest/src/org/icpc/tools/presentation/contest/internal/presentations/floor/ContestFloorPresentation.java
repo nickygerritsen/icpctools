@@ -37,7 +37,7 @@ public class ContestFloorPresentation extends AbstractICPCPresentation {
 		IContest contest = getContest();
 		if (contest == null)
 			return 0;
-		return contest.getNumTeams() * MS_PER_TEAM;
+		return 132 * MS_PER_TEAM;
 	}
 
 	@Override
