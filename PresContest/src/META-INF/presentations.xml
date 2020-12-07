@@ -244,6 +244,22 @@
       image="images/presentations/scoreboard.png"
       class="org.icpc.tools.presentation.contest.internal.scoreboard.ScoreboardPresentation"/>
    <presentation
+      id="org.icpc.tools.presentation.contest.scoreboard.contestants"
+      name="Scoreboard - Contestants"
+      category="Scoreboard"
+      properties="focusTeam:# - a team to focus on,style - set team name style,clockOn,clockOff"
+      description="Contest scoreboard for contestants."
+      image="images/presentations/scoreboard.png"
+      class="org.icpc.tools.presentation.contest.internal.scoreboard.ContestantsScoreboardPresentation"/>
+   <presentation
+      id="org.icpc.tools.presentation.contest.scoreboard.companies"
+      name="Scoreboard - Companies"
+      category="Scoreboard"
+      properties="focusTeam:# - a team to focus on,style - set team name style,clockOn,clockOff"
+      description="Contest scoreboard for companies."
+      image="images/presentations/scoreboard.png"
+      class="org.icpc.tools.presentation.contest.internal.scoreboard.CompaniesScoreboardPresentation"/>
+   <presentation
       id="org.icpc.tools.presentation.contest.scoreboard.timeline"
       name="Timeline"
       category="Scoreboard"
