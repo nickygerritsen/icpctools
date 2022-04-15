@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.icpc.tools.contest.Trace;
@@ -70,7 +71,7 @@ public class TSVImporter {
 		}
 	}
 
-	public static void importTeams(List<Team> list, File f, boolean autoAssignTeamIds) throws IOException {
+	public static void importTeams(List<Team> list, File f, boolean autoAssignTeamIds, HashMap<String, String> teamIdMapping) throws IOException {
 		File file = new File(f, "teams2.tsv");
 		if (!file.exists())
 			file = new File(f, "teams.tsv");
@@ -91,14 +92,16 @@ public class TSVImporter {
 								add(t, ContestObject.ID, autoTeamId + "");
 								autoTeamId++;
 							} else {
-								add(t, ContestObject.ID, "0");
+								String icpcId = st[1];
+								add(t, ContestObject.ID, teamIdMapping.getOrDefault(icpcId, "0"));
 							}
 						} else {
 							if (autoAssignTeamIds && "0".equals(st[0])) {
 								add(t, ContestObject.ID, autoTeamId + "");
 								autoTeamId++;
 							} else {
-								add(t, ContestObject.ID, st[0]);
+								String icpcId = st[1];
+								add(t, ContestObject.ID, teamIdMapping.getOrDefault(icpcId, "0"));
 							}
 						}
 						if (st.length < 7)

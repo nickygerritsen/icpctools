@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.icpc.tools.contest.Trace;
@@ -40,6 +41,7 @@ public class JsonToTSVConverter {
 	protected static List<Team> teamList = new ArrayList<>();
 	protected static List<Person> personList = new ArrayList<>();
 	protected static List<String> contestIdList = new ArrayList<>();
+	protected static HashMap<String,String> teamIdMapping = new HashMap<>();
 
 	protected static GoogleMapsGeocoder geocoder;
 
@@ -118,12 +120,26 @@ public class JsonToTSVConverter {
 			e.printStackTrace();
 		}
 
+		try {
+			File positions = new File("/Users/nicky/Projects/SWERC/swerc-ccs-config-2021-2022/rooms/positions.json");
+			JSONParser p = new JSONParser(positions);
+
+			Object[] teams = p.readArray();
+			for (int i = 0; i < teams.length; i++) {
+				JsonObject team = (JsonObject)teams[i];
+				String icpcTeamId = team.getString("team_id");
+				teamIdMapping.put(icpcTeamId, "" + (i + 1));
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
 		Info info = null;
 		try {
 			System.out.println("Reading CMS clics data from: " + cmsClicsRoot);
 			TSVImporter.importGroups(groupList, cmsClicsRoot);
 			TSVImporter.importInstitutions(orgList, cmsClicsRoot);
-			TSVImporter.importTeams(teamList, cmsClicsRoot, AUTO_ASSIGN_TEAM_IDS);
+			TSVImporter.importTeams(teamList, cmsClicsRoot, AUTO_ASSIGN_TEAM_IDS, teamIdMapping);
 			TSVImporter.importTeamMembers(personList, cmsClicsRoot);
 		} catch (Exception e) {
 			e.printStackTrace();
