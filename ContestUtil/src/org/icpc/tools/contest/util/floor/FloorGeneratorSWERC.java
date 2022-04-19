@@ -30,7 +30,7 @@ public class FloorGeneratorSWERC extends FloorGenerator {
 
 	private static final int smallRoomRows = 6;
 
-	private static final int largeRoomRows = 16;
+	private static final int largeRoomRows = 18;
 
 	private static final float interRoomSpacingX = (aisle + tad) / 2 * 3;
 	private static final float interRoomSpacingY = taw * 2;
