@@ -29,6 +29,7 @@ public class TSVImporter {
 	private static final String TEAM_ID = "team_id";
 	private static final String FIRST_NAME = "first_name";
 	private static final String LAST_NAME = "last_name";
+	private static final String HIDDEN = "hidden";
 	private static final String SEX = "sex";
 	private static final String ROLE = "role";
 
@@ -58,6 +59,9 @@ public class TSVImporter {
 						add(g, ID, st[0]);
 						add(g, ICPC_ID, st[0]);
 						add(g, NAME, st[1]);
+						if ("13337".equals(st[0])) {
+							g.add(HIDDEN, true);
+						}
 						list.add(g);
 					} catch (Exception e) {
 						Trace.trace(Trace.ERROR, "Error parsing groups.tsv", e);
@@ -112,6 +116,10 @@ public class TSVImporter {
 								Organization o = JsonToTSVConverter.getOrganizationById(id);
 								o.add(FORMAL_NAME, st[4]);
 								o.add(COUNTRY, st[6]);
+							}
+
+							if ("13337".equals(st[2])) {
+								t.add(HIDDEN, true);
 							}
 
 							list.add(t);
