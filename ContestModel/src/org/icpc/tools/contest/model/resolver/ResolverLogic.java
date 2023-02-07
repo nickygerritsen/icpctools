@@ -360,6 +360,8 @@ public class ResolverLogic {
 	private void resolveEverything(boolean startWithJudgeQueue) {
 		// boolean singleStep = false;
 
+		boolean janeStreetShown = false;
+
 		Timing timing = null;
 		if (startWithJudgeQueue && !teamLists.isEmpty()) {
 			steps.add(new PresentationStep(PresentationStep.Presentations.JUDGE));
@@ -494,6 +496,14 @@ public class ResolverLogic {
 									}
 
 									if (show) {
+										if (!janeStreetShown && teamAwards.size() >= 1 && teamAwards.get(0).getCitation().equals("Bronze medal winner")) {
+											janeStreetShown = true;
+											steps.add(new PresentationStep(PresentationStep.Presentations.JANE_STREET));
+											steps.add(new PauseStep());
+											steps.add(new PresentationStep(PresentationStep.Presentations.SCOREBOARD));
+											steps.add(new PauseStep());
+										}
+
 										steps.add(new PresentationStep(PresentationStep.Presentations.TEAM_AWARD));
 										steps.add(new AwardStep(missedTeamId, teamAwards));
 										steps.add(new PauseStep());
@@ -553,6 +563,15 @@ public class ResolverLogic {
 						if (show) {
 							// we have successfully resolved up to and including the next award row, so
 							// show it
+
+							if (!janeStreetShown && teamAwards.size() >= 1 && teamAwards.get(0).getCitation().equals("Bronze medal winner")) {
+								janeStreetShown = true;
+								steps.add(new PresentationStep(PresentationStep.Presentations.JANE_STREET));
+								steps.add(new PauseStep());
+								steps.add(new PresentationStep(PresentationStep.Presentations.SCOREBOARD));
+								steps.add(new PauseStep());
+							}
+
 							steps.add(new PresentationStep(PresentationStep.Presentations.TEAM_AWARD));
 							steps.add(new AwardStep(team.getId(), teamAwards));
 							steps.add(new PauseStep());

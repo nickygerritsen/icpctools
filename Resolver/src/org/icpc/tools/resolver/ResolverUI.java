@@ -38,6 +38,7 @@ import org.icpc.tools.presentation.contest.internal.ICPCFont;
 import org.icpc.tools.presentation.contest.internal.TextHelper;
 import org.icpc.tools.presentation.contest.internal.presentations.MessagePresentation;
 import org.icpc.tools.presentation.contest.internal.presentations.StaticLogoPresentation;
+import org.icpc.tools.presentation.contest.internal.presentations.resolver.JaneStreetPresentation;
 import org.icpc.tools.presentation.contest.internal.presentations.resolver.JudgePresentation2;
 import org.icpc.tools.presentation.contest.internal.presentations.resolver.OrgsPresentation;
 import org.icpc.tools.presentation.contest.internal.presentations.resolver.SplashPresentation;
@@ -99,6 +100,7 @@ public class ResolverUI {
 	private AbstractICPCPresentation splashPresentation;
 	private ScoreboardPresentation scoreboardPresentation;
 	private TeamAwardPresentation awardPresentation;
+	private JaneStreetPresentation janeStreetPresentation;
 	private TeamLogoPresentation teamLogoPresentation;
 	private TeamListPresentation teamListPresentation;
 	private MessagePresentation messagePresentation;
@@ -302,6 +304,15 @@ public class ResolverUI {
 		awardPresentation.cacheAwards(steps);
 		awardPresentation.setShowInfo(showInfo);
 
+		janeStreetPresentation = new JaneStreetPresentation() {
+			@Override
+			public void paint(Graphics2D g) {
+				super.paint(g);
+				paintHook(g);
+			}
+		};
+		janeStreetPresentation.setSize(window.getSize());
+
 		teamListPresentation = new TeamListPresentation() {
 			@Override
 			public void paint(Graphics2D g) {
@@ -428,6 +439,7 @@ public class ResolverUI {
 			teamListPresentation.setContest(state.contest);
 			judgePresentation.setContest(state.contest);
 			awardPresentation.setContest(state.contest);
+			janeStreetPresentation.setContest(state.contest);
 			if (teamLogoPresentation != null)
 				teamLogoPresentation.setContest(state.contest);
 			if (orgPresentation != null)
@@ -475,6 +487,8 @@ public class ResolverUI {
 				setPresentation(judgePresentation);
 			else if (pstep.p == PresentationStep.Presentations.TEAM_AWARD)
 				setPresentation(awardPresentation);
+			else if (pstep.p == PresentationStep.Presentations.JANE_STREET)
+				setPresentation(janeStreetPresentation);
 			else if (pstep.p == PresentationStep.Presentations.TEAM_LIST)
 				setPresentation(teamListPresentation);
 		} else {
