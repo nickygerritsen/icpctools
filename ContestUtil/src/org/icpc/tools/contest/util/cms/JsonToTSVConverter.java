@@ -2,6 +2,7 @@ package org.icpc.tools.contest.util.cms;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import org.icpc.tools.contest.Trace;
 import org.icpc.tools.contest.model.IContestObject;
 import org.icpc.tools.contest.model.feed.JSONArrayWriter;
 import org.icpc.tools.contest.model.feed.JSONEncoder;
+import org.icpc.tools.contest.model.feed.JSONParser;
 import org.icpc.tools.contest.model.internal.Group;
 import org.icpc.tools.contest.model.internal.Info;
 import org.icpc.tools.contest.model.internal.Organization;
@@ -126,7 +128,7 @@ public class JsonToTSVConverter {
 
 			Object[] teams = p.readArray();
 			for (int i = 0; i < teams.length; i++) {
-				JsonObject team = (JsonObject)teams[i];
+				JSONParser.JsonObject team = (JSONParser.JsonObject)teams[i];
 				String icpcTeamId = team.getString("team_id");
 				teamIdMapping.put(icpcTeamId, "" + (i + 1));
 			}

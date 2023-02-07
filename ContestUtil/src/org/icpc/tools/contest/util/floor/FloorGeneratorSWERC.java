@@ -32,7 +32,7 @@ public class FloorGeneratorSWERC extends FloorGenerator {
 
 	private static final int largeRoomRows = 18;
 
-	private static final float interRoomSpacingX = (aisle + tad) / 2 * 3;
+	private static final float interRoomSpacingX = (aisle + tad) / 2;
 	private static final float interRoomSpacingY = taw * 2;
 
 	private static class RoomPos {
@@ -126,7 +126,7 @@ public class FloorGeneratorSWERC extends FloorGenerator {
 		Trace.init("ICPC Floor Map Generator", "floorMap", args);
 
 		try {
-			File positions = new File("/Users/nicky/Projects/SWERC/swerc-ccs-config-2021-2022/rooms/positions.json");
+			File positions = new File("/Users/nicky/Projects/SWERC/ccs-config-2022-2023/rooms/positions.json");
 			JSONParser p = new JSONParser(positions);
 			Object[] teams = p.readArray();
 			for (int i = 0; i < teams.length; i++) {
@@ -135,7 +135,12 @@ public class FloorGeneratorSWERC extends FloorGenerator {
 				String row = team.getString("row");
 				String pc = team.getString("pc");
 				String teamId = "" + (i + 1);
-				RoomPos rp = new RoomPos(Integer.parseInt(row), Integer.parseInt(pc), Integer.parseInt(room));
+				int roomIdx = Integer.parseInt(room);
+				int pcIdx = Integer.parseInt(pc);
+				if (roomIdx == 1 && pcIdx == 2) {
+					pcIdx++;
+				}
+				RoomPos rp = new RoomPos(Integer.parseInt(row), pcIdx, roomIdx);
 				present.put(rp, teamId);
 			}
 		} catch (IOException e) {
@@ -161,12 +166,17 @@ public class FloorGeneratorSWERC extends FloorGenerator {
 
 			x = 0;
 			y = smallRoomsOffset;
-			createSmallRoom(3, x, y);
+			createSmallRoom(1, x, y);
 
 			float secondSmallRoomOffset = (aisle + tad) / 2 * smallRoomRows + interRoomSpacingX;
 			x = secondSmallRoomOffset;
 			y = smallRoomsOffset;
-			createSmallRoom(4, x, y);
+			createSmallRoom(2, x, y);
+
+			float thirdSmallRoomOffset = secondSmallRoomOffset + (aisle + tad) / 2 * smallRoomRows + interRoomSpacingX;
+			x = thirdSmallRoomOffset;
+			y = smallRoomsOffset;
+			createSmallRoom(3, x, y);
 
 			x = 0;
 			y = secondLargeRoomOffset;
@@ -183,6 +193,7 @@ public class FloorGeneratorSWERC extends FloorGenerator {
 			// Small room aisles
 			floor.createAisle(aisle / 2, smallRoomsOffset - 4 * taw, aisle / 2, smallRoomsOffset - 3 * taw);
 			floor.createAisle(aisle / 2 + secondSmallRoomOffset, smallRoomsOffset - 4 * taw, aisle / 2 + secondSmallRoomOffset, smallRoomsOffset - 3 * taw);
+			floor.createAisle(aisle / 2 + thirdSmallRoomOffset, smallRoomsOffset - 4 * taw, aisle / 2 + thirdSmallRoomOffset, smallRoomsOffset - 3 * taw);
 			floor.createAisle(aisle / 2, smallRoomsOffset - 4 * taw, printerAndBalloonX, smallRoomsOffset - 4 * taw);
 
 			// First large room aisles
