@@ -135,12 +135,7 @@ public class FloorGeneratorSWERC extends FloorGenerator {
 				String row = team.getString("row");
 				String pc = team.getString("pc");
 				String teamId = "" + (i + 1);
-				int roomIdx = Integer.parseInt(room);
-				int pcIdx = Integer.parseInt(pc);
-				if (roomIdx == 1 && pcIdx == 2) {
-					pcIdx++;
-				}
-				RoomPos rp = new RoomPos(Integer.parseInt(row), pcIdx, roomIdx);
+				RoomPos rp = new RoomPos(Integer.parseInt(row), Integer.parseInt(pc), Integer.parseInt(room));
 				present.put(rp, teamId);
 			}
 		} catch (IOException e) {
