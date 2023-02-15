@@ -28,7 +28,7 @@ public class FloorGeneratorSWERC extends FloorGenerator {
 
 	private static final int teamsPerRowLargeRoom = 2;
 
-	private static final int smallRoomRows = 6;
+	private static final int[] smallRoomRows = new int[]{11, 7, 6};
 
 	private static final int largeRoomRows = 18;
 
@@ -104,7 +104,7 @@ public class FloorGeneratorSWERC extends FloorGenerator {
 	protected static void createSmallRoom(int room, float x, float y) {
 		floor.createAisle(x + aisle / 4, y - (teamsPerRowSmallRooms) * taw, x + aisle / 4, y + taw);
 		float roomStartX = x;
-		for (int i = 0; i < smallRoomRows; i++) {
+		for (int i = 0; i < smallRoomRows[room - 1]; i++) {
 			x = createAisleOfTeams(room, i + 1, x, y);
 		}
 		floor.createAisle(roomStartX + aisle / 4, y - (teamsPerRowSmallRooms) * taw, x + aisle / 4, y - (teamsPerRowSmallRooms) * taw);
@@ -157,21 +157,22 @@ public class FloorGeneratorSWERC extends FloorGenerator {
 			float firstLargeRoomOffset = 0;
 			float secondLargeRoomOffset = firstLargeRoomOffset + largeRoomHeight + interRoomSpacingY;
 			float smallRoomsOffset = secondLargeRoomOffset + taw + largeRoomHeight + interRoomSpacingY;
-			float printerAndBalloonX = largeRoomWidth + aisle;
 
 			x = 0;
 			y = smallRoomsOffset;
 			createSmallRoom(1, x, y);
 
-			float secondSmallRoomOffset = (aisle + tad) / 2 * smallRoomRows + interRoomSpacingX;
+			float secondSmallRoomOffset = (aisle + tad) / 2 * smallRoomRows[0] + interRoomSpacingX;
 			x = secondSmallRoomOffset;
 			y = smallRoomsOffset;
 			createSmallRoom(2, x, y);
 
-			float thirdSmallRoomOffset = secondSmallRoomOffset + (aisle + tad) / 2 * smallRoomRows + interRoomSpacingX;
+			float thirdSmallRoomOffset = secondSmallRoomOffset + (aisle + tad) / 2 * smallRoomRows[1] + interRoomSpacingX;
 			x = thirdSmallRoomOffset;
 			y = smallRoomsOffset;
 			createSmallRoom(3, x, y);
+
+			float printerAndBalloonX = thirdSmallRoomOffset + (aisle + tad) / 2 * smallRoomRows[2] + interRoomSpacingX;
 
 			x = 0;
 			y = secondLargeRoomOffset;
