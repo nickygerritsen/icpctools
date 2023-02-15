@@ -2,15 +2,16 @@ package org.icpc.tools.contest.util.floor;
 
 import org.icpc.tools.contest.Trace;
 import org.icpc.tools.contest.model.FloorMap;
+import org.icpc.tools.contest.model.IContest;
 import org.icpc.tools.contest.model.IPrinter;
+import org.icpc.tools.contest.model.IProblem;
+import org.icpc.tools.contest.model.feed.DiskContestSource;
 import org.icpc.tools.contest.model.feed.JSONParser;
 import org.icpc.tools.contest.model.feed.JSONParser.JsonObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 public class FloorGeneratorSWERC extends FloorGenerator {
@@ -96,7 +97,7 @@ public class FloorGeneratorSWERC extends FloorGenerator {
 		}
 		x += tad / 2;
 
-		floor.createAisle(x + aisle / 4, y - (teamsPerRowSmallRooms - 2) * taw, x + aisle / 4, y + 3 * taw);
+		floor.createAisle(x + aisle / 4, y - (teamsPerRowSmallRooms - 2) * taw - 0.1, x + aisle / 4, y + 3 * taw + 0.1);
 
 		return x;
 	}
@@ -145,12 +146,6 @@ public class FloorGeneratorSWERC extends FloorGenerator {
 		try {
 			float x = 0;
 			float y = 0;
-
-			int numProblems = 11;
-			List<String> problems = new ArrayList<>();
-			for (char letter = 'A'; letter < 'A' + numProblems; letter++) {
-				problems.add(String.valueOf(letter));
-			}
 
 			float largeRoomHeight = (teamsPerRowLargeRoom + 2) * taw;
 			float largeRoomWidth = largeRoomRows * (aisle + tad) / 2;
@@ -205,27 +200,39 @@ public class FloorGeneratorSWERC extends FloorGenerator {
 			floor.createAisle(printerAndBalloonX, largeRoomHeight - taw, printerAndBalloonX, smallRoomsOffset - 4 * taw);
 
 			float firstLargeRoomCenter = secondLargeRoomOffset + largeRoomHeight / 2 - 2 * taw;
-			float totalProblemHeight = (problems.size() - 1) * 2;
-			float firstProblemPosition = firstLargeRoomCenter - totalProblemHeight / 2;
-
-			for (int i = 0; i < problems.size(); i++) {
-				floor.createBalloon(problems.get(i), printerAndBalloonX + tad, firstProblemPosition + i * 2);
-			}
-
-			IPrinter p = floor.createPrinter(printerAndBalloonX + tad, firstProblemPosition + problems.size() * 2);
 
 			long time = System.currentTimeMillis();
 
 			Trace.trace(Trace.USER, "Time: " + (System.currentTimeMillis() - time));
 
+			IPrinter p = null;
+			IProblem pp = null;
+
 			if (args != null && args.length > 0) {
 				File f = new File(args[0]);
+				DiskContestSource source = new DiskContestSource(f);
+				IContest contest2 = source.getContest();
+				source.waitForContest(10000);
+				IProblem[] problems = contest2.getProblems();
+
+				float totalProblemHeight = (problems.length - 1) * 2;
+				float firstProblemPosition = firstLargeRoomCenter - totalProblemHeight / 2;
+
+				p = floor.createPrinter(printerAndBalloonX + tad, firstProblemPosition + problems.length * 2);
+
+				for (int i = 0; i < problems.length; i++) {
+					floor.createBalloon(problems[i].getId(), printerAndBalloonX + tad, firstProblemPosition + i * 2);
+				}
+
 				floor.write(f);
+
+				pp = problems[0];
 			}
 
 			FloorMap.Path path = floor.getPath(floor.getTeam(57), p);
+			FloorMap.Path path2 = floor.getPath(floor.getTeam(120), pp);
 
-			show(floor, 57, true, path);
+			show(floor, 57, true, path, path2);
 		} catch (Exception e) {
 			Trace.trace(Trace.ERROR, "Error generating floor map", e);
 		}
