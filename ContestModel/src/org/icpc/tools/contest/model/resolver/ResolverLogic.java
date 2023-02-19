@@ -10,6 +10,7 @@ import org.icpc.tools.contest.Trace;
 import org.icpc.tools.contest.model.FreezeFilter;
 import org.icpc.tools.contest.model.IAward;
 import org.icpc.tools.contest.model.IAward.DisplayMode;
+import org.icpc.tools.contest.model.IContest;
 import org.icpc.tools.contest.model.IContestObject.ContestType;
 import org.icpc.tools.contest.model.IJudgement;
 import org.icpc.tools.contest.model.IJudgementType;
@@ -20,6 +21,7 @@ import org.icpc.tools.contest.model.ISubmission;
 import org.icpc.tools.contest.model.ITeam;
 import org.icpc.tools.contest.model.Status;
 import org.icpc.tools.contest.model.TypeFilter;
+import org.icpc.tools.contest.model.internal.Award;
 import org.icpc.tools.contest.model.internal.Contest;
 import org.icpc.tools.contest.model.resolver.ResolutionUtil.AwardStep;
 import org.icpc.tools.contest.model.resolver.ResolutionUtil.ContestStateStep;
@@ -36,6 +38,7 @@ import org.icpc.tools.contest.model.resolver.ResolutionUtil.ListAwardStep;
 import org.icpc.tools.contest.model.resolver.ResolutionUtil.TeamSelectionStep;
 import org.icpc.tools.contest.model.resolver.ResolutionUtil.ToJudgeStep;
 import org.icpc.tools.contest.model.util.AwardUtil;
+import org.icpc.tools.contest.model.util.Messages;
 
 /**
  * The Resolver 'logic'. This is the class that performs the actual resolving of submissions to
@@ -496,9 +499,30 @@ public class ResolverLogic {
 									}
 
 									if (show) {
-										if (!janeStreetShown && teamAwards.size() >= 1 && teamAwards.get(0).getCitation().equals("Bronze medal winner")) {
+										boolean bronze = false;
+										if (teamAwards.size() >= 1) {
+											for (IAward award : teamAwards) {
+												if (award.getCitation().contains("Bronze")) {
+													bronze = true;
+												}
+											}
+										}
+										if (!janeStreetShown && bronze) {
 											janeStreetShown = true;
-											steps.add(new PresentationStep(PresentationStep.Presentations.JANE_STREET));
+											steps.add(new PresentationStep(PresentationStep.Presentations.TEAM_AWARD));
+											List<IAward> janeStreetAwards = new ArrayList<>();
+											ITeam janeStreetTeam = contest.getTeamById("12");
+											IStanding s = contest.getStanding(janeStreetTeam);
+											janeStreetAwards.add(
+													new Award(
+															IAward.OTHER,
+															s.getNumSolved() + "",
+															new String[] { "12" },
+															Messages.getString("awardSolvedMultiple").replace("{0}", s.getNumSolved() + ""),
+															DisplayMode.PAUSE
+													)
+											);
+											steps.add(new AwardStep("12", janeStreetAwards));
 											steps.add(new PauseStep());
 											steps.add(new PresentationStep(PresentationStep.Presentations.SCOREBOARD));
 											steps.add(new PauseStep());
@@ -564,9 +588,30 @@ public class ResolverLogic {
 							// we have successfully resolved up to and including the next award row, so
 							// show it
 
-							if (!janeStreetShown && teamAwards.size() >= 1 && teamAwards.get(0).getCitation().equals("Bronze medal winner")) {
+							boolean bronze = false;
+							if (teamAwards.size() >= 1) {
+								for (IAward award : teamAwards) {
+									if (award.getCitation().contains("Bronze")) {
+										bronze = true;
+									}
+								}
+							}
+							if (!janeStreetShown && bronze) {
 								janeStreetShown = true;
-								steps.add(new PresentationStep(PresentationStep.Presentations.JANE_STREET));
+								steps.add(new PresentationStep(PresentationStep.Presentations.TEAM_AWARD));
+								List<IAward> janeStreetAwards = new ArrayList<>();
+								ITeam janeStreetTeam = contest.getTeamById("12");
+								IStanding s = contest.getStanding(janeStreetTeam);
+								janeStreetAwards.add(
+										new Award(
+												IAward.OTHER,
+												s.getNumSolved() + "",
+												new String[] { "12" },
+												Messages.getString("awardSolvedMultiple").replace("{0}", s.getNumSolved() + ""),
+												DisplayMode.PAUSE
+										)
+								);
+								steps.add(new AwardStep("12", janeStreetAwards));
 								steps.add(new PauseStep());
 								steps.add(new PresentationStep(PresentationStep.Presentations.SCOREBOARD));
 								steps.add(new PauseStep());

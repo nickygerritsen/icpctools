@@ -1,22 +1,5 @@
 package org.icpc.tools.presentation.contest.internal.presentations.resolver;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
-
 import org.icpc.tools.contest.Trace;
 import org.icpc.tools.contest.model.IAward;
 import org.icpc.tools.contest.model.IAward.AwardType;
@@ -36,6 +19,16 @@ import org.icpc.tools.presentation.contest.internal.AbstractICPCPresentation;
 import org.icpc.tools.presentation.contest.internal.ICPCFont;
 import org.icpc.tools.presentation.contest.internal.ImageScaler;
 import org.icpc.tools.presentation.contest.internal.TextHelper;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TeamAwardPresentation extends AbstractICPCPresentation {
 	private static final int BORDER = 20;
@@ -274,6 +267,10 @@ public class TeamAwardPresentation extends AbstractICPCPresentation {
 		if (c.name == null)
 			c.name = splitString(g, team.getActualDisplayName(), usableWidth);
 
+		if (c.name[0].equals("Jane Street - Jane Street")) {
+			c.name[0] = "Jane Street";
+		}
+
 		h += fm.getHeight() * c.name.length;
 
 		for (IAward a : awards) {
@@ -420,7 +417,7 @@ public class TeamAwardPresentation extends AbstractICPCPresentation {
 			}
 		}
 
-		String[] teamIds = new String[] { currentCache.teamId };
+		String[] teamIds = new String[]{currentCache.teamId};
 		int numFTS = fts.size();
 		if (numFTS == 1) {
 			list.add(new Award(IAward.FIRST_TO_SOLVE, fts.get(0), teamIds, "First to solve problem " + fts.get(0), mode));
