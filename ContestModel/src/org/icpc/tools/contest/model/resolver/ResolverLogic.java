@@ -511,14 +511,12 @@ public class ResolverLogic {
 											janeStreetShown = true;
 											steps.add(new PresentationStep(PresentationStep.Presentations.TEAM_AWARD));
 											List<IAward> janeStreetAwards = new ArrayList<>();
-											ITeam janeStreetTeam = contest.getTeamById("12");
-											IStanding s = contest.getStanding(janeStreetTeam);
 											janeStreetAwards.add(
 													new Award(
 															IAward.OTHER,
-															s.getNumSolved() + "",
+															"11",
 															new String[] { "12" },
-															Messages.getString("awardSolvedMultiple").replace("{0}", s.getNumSolved() + ""),
+															Messages.getString("awardSolvedMultiple").replace("{0}", "11"),
 															DisplayMode.PAUSE
 													)
 											);
@@ -600,14 +598,12 @@ public class ResolverLogic {
 								janeStreetShown = true;
 								steps.add(new PresentationStep(PresentationStep.Presentations.TEAM_AWARD));
 								List<IAward> janeStreetAwards = new ArrayList<>();
-								ITeam janeStreetTeam = contest.getTeamById("12");
-								IStanding s = contest.getStanding(janeStreetTeam);
 								janeStreetAwards.add(
 										new Award(
 												IAward.OTHER,
-												s.getNumSolved() + "",
+												"11",
 												new String[] { "12" },
-												Messages.getString("awardSolvedMultiple").replace("{0}", s.getNumSolved() + ""),
+												Messages.getString("awardSolvedMultiple").replace("{0}",  "11"),
 												DisplayMode.PAUSE
 										)
 								);
